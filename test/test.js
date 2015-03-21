@@ -38,6 +38,17 @@ test('pass file when isNull()', function (t) {
 //   stream.on()
 // });
 
+//fix newline characters such that tests should not fail
+//in windows
+function fileContent(relativePath){
+  var fstr = fs.readFileSync(path.join(__dirname, relativePath), 'utf8');
+  if(process.platform === 'win32'){
+    return fstr.replace(/\r\n/g,"\n");
+  }else{
+    return fstr;
+  }
+}
+
 test('compile a single sass file', function (t) {
   var sassFile = createVinyl('mixins.scss');
 
@@ -49,7 +60,7 @@ test('compile a single sass file', function (t) {
     t.ok(cssFile.contents, 'cssFile.contents should exist');
     t.equal(cssFile.path, path.join(__dirname, 'scss', 'mixins.css'));
     t.equal(
-      fs.readFileSync(path.join(__dirname, 'ref/mixins.css'), 'utf8'),
+      fileContent('ref/mixins.css'),
       cssFile.contents.toString(),
       'file compiles correctly to css'
     );
@@ -69,7 +80,7 @@ test('compile a single sass file synchronously', function (t) {
     t.ok(cssFile.contents, 'cssFile.contents should exist');
     t.equal(cssFile.path, path.join(__dirname, 'scss', 'mixins.css'));
     t.equal(
-      fs.readFileSync(path.join(__dirname, 'ref/mixins.css'), 'utf8'),
+      fileContent('ref/mixins.css'),
       cssFile.contents.toString(),
       'file compiles correctly to css'
     );
